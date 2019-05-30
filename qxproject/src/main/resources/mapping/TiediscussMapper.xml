@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.TiediscussMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Tiediscuss">
+    <id column="discuss_id" jdbcType="INTEGER" property="discussId" />
+    <result column="tieid" jdbcType="INTEGER" property="tieid" />
+    <result column="discuss_content" jdbcType="VARCHAR" property="discussContent" />
+    <result column="discuss_author" jdbcType="VARCHAR" property="discussAuthor" />
+    <result column="discuss_time" jdbcType="TIMESTAMP" property="discussTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    discuss_id, tieid, discuss_content, discuss_author, discuss_time
+  </sql>
+  <select id="findalltiediscuss" resultMap="BaseResultMap">
+     SELECT * FROM tie_discuss
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tie_discuss
+    where discuss_id = #{discussId,jdbcType=INTEGER}
+  </select>
+  <select id="selectBytieid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from tie_discuss
+    where tieid = #{tieid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tie_discuss
+    where discuss_id = #{discussId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Tiediscuss">
+    insert into tie_discuss (discuss_id, tieid, discuss_content, 
+      discuss_author, discuss_time)
+    values (#{discussId,jdbcType=INTEGER}, #{tieid,jdbcType=INTEGER}, #{discussContent,jdbcType=VARCHAR}, 
+      #{discussAuthor,jdbcType=VARCHAR}, #{discussTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Tiediscuss">
+    insert into tie_discuss
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="discussId != null">
+        discuss_id,
+      </if>
+      <if test="tieid != null">
+        tieid,
+      </if>
+      <if test="discussContent != null">
+        discuss_content,
+      </if>
+      <if test="discussAuthor != null">
+        discuss_author,
+      </if>
+      <if test="discussTime != null">
+        discuss_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="discussId != null">
+        #{discussId,jdbcType=INTEGER},
+      </if>
+      <if test="tieid != null">
+        #{tieid,jdbcType=INTEGER},
+      </if>
+      <if test="discussContent != null">
+        #{discussContent,jdbcType=VARCHAR},
+      </if>
+      <if test="discussAuthor != null">
+        #{discussAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="discussTime != null">
+        #{discussTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Tiediscuss">
+    update tie_discuss
+    <set>
+      <if test="tieid != null">
+        tieid = #{tieid,jdbcType=INTEGER},
+      </if>
+      <if test="discussContent != null">
+        discuss_content = #{discussContent,jdbcType=VARCHAR},
+      </if>
+      <if test="discussAuthor != null">
+        discuss_author = #{discussAuthor,jdbcType=VARCHAR},
+      </if>
+      <if test="discussTime != null">
+        discuss_time = #{discussTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where discuss_id = #{discussId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Tiediscuss">
+    update tie_discuss
+    set tieid = #{tieid,jdbcType=INTEGER},
+      discuss_content = #{discussContent,jdbcType=VARCHAR},
+      discuss_author = #{discussAuthor,jdbcType=VARCHAR},
+      discuss_time = #{discussTime,jdbcType=TIMESTAMP}
+    where discuss_id = #{discussId,jdbcType=INTEGER}
+  </update>
+</mapper>

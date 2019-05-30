@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.MeterialMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Meterial">
+    <id column="meterialid" jdbcType="INTEGER" property="meterialid" />
+    <result column="meterialitype" jdbcType="VARCHAR" property="meterialitype" />
+    <result column="meterialname" jdbcType="VARCHAR" property="meterialname" />
+    <result column="meterdesc" jdbcType="VARCHAR" property="meterdesc" />
+    <result column="meterialsize" jdbcType="VARCHAR" property="meterialsize" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="datetime" jdbcType="TIMESTAMP" property="datetime" />
+    <result column="meterialurl" jdbcType="VARCHAR" property="meterialurl" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    meterialid, meterialitype, meterialname, meterdesc, meterialsize, author, datetime, 
+    meterialurl
+  </sql>
+  <select id="findallmenus" resultMap="BaseResultMap">
+    select * from meterial
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from meterial
+    where meterialid = #{meterialid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from meterial
+    where meterialid = #{meterialid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Meterial">
+    insert into meterial (meterialid, meterialitype, meterialname, 
+      meterdesc, meterialsize, author, 
+      datetime, meterialurl)
+    values (#{meterialid,jdbcType=INTEGER}, #{meterialitype,jdbcType=VARCHAR}, #{meterialname,jdbcType=VARCHAR}, 
+      #{meterdesc,jdbcType=VARCHAR}, #{meterialsize,jdbcType=VARCHAR}, #{author,jdbcType=VARCHAR},
+      #{datetime,jdbcType=TIMESTAMP}, #{meterialurl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Meterial">
+    insert into meterial
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="meterialid != null">
+        meterialid,
+      </if>
+      <if test="meterialitype != null">
+        meterialitype,
+      </if>
+      <if test="meterialname != null">
+        meterialname,
+      </if>
+      <if test="meterdesc != null">
+        meterdesc,
+      </if>
+      <if test="meterialsize != null">
+        meterialsize,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="datetime != null">
+        datetime,
+      </if>
+      <if test="meterialurl != null">
+        meterialurl,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="meterialid != null">
+        #{meterialid,jdbcType=INTEGER},
+      </if>
+      <if test="meterialitype != null">
+        #{meterialitype,jdbcType=VARCHAR},
+      </if>
+      <if test="meterialname != null">
+        #{meterialname,jdbcType=VARCHAR},
+      </if>
+      <if test="meterdesc != null">
+        #{meterdesc,jdbcType=VARCHAR},
+      </if>
+      <if test="meterialsize != null">
+        #{meterialsize,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null">
+        #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meterialurl != null">
+        #{meterialurl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Meterial">
+    update meterial
+    <set>
+      <if test="meterialitype != null">
+        meterialitype = #{meterialitype,jdbcType=VARCHAR},
+      </if>
+      <if test="meterialname != null">
+        meterialname = #{meterialname,jdbcType=VARCHAR},
+      </if>
+      <if test="meterdesc != null">
+        meterdesc = #{meterdesc,jdbcType=VARCHAR},
+      </if>
+      <if test="meterialsize != null">
+        meterialsize = #{meterialsize,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="datetime != null">
+        datetime = #{datetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="meterialurl != null">
+        meterialurl = #{meterialurl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where meterialid = #{meterialid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Meterial">
+    update meterial
+    set meterialitype = #{meterialitype,jdbcType=VARCHAR},
+      meterialname = #{meterialname,jdbcType=VARCHAR},
+      meterdesc = #{meterdesc,jdbcType=VARCHAR},
+      meterialsize = #{meterialsize,jdbcType=VARCHAR},
+      author = #{author,jdbcType=VARCHAR},
+      datetime = #{datetime,jdbcType=TIMESTAMP},
+      meterialurl = #{meterialurl,jdbcType=VARCHAR}
+    where meterialid = #{meterialid,jdbcType=INTEGER}
+  </update>
+</mapper>

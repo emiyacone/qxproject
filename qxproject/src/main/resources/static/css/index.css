@@ -1,0 +1,19 @@
+.enterprase {
+    margin: 20px;
+    display: flex;
+}
+
+.label {
+    width: 61px;
+    text-align: right;
+    background-color: white;
+    color: black;
+}
+
+
+
+.fromdata {
+    padding: 10px;
+    overflow-x: hidden;
+    overflow-y: hidden
+}

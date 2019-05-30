@@ -1,0 +1,12 @@
+13:08:36.807 logback [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication on LAPTOP-V92G2TFM with PID 33108 (D:\develop\qxproject\target\classes started by tqy in D:\develop\qxproject)
+13:08:36.811 logback [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to default profiles: default
+13:08:38.221 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+13:08:38.234 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+13:08:38.242 logback [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+13:08:38.242 logback [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.17]
+13:08:38.341 logback [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+13:08:38.341 logback [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1467 ms
+13:08:38.962 logback [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+13:08:39.169 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+13:08:39.199 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+13:08:39.202 logback [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 3.014 seconds (JVM running for 4.209)

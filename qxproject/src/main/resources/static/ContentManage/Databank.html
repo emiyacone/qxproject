@@ -1,0 +1,297 @@
+<script>
+    function pagerFilter(data) {
+        if (typeof data.length == 'number' && typeof data.splice == 'function') {// is array
+            data = {
+                total: data.length,
+                rows: data
+            }
+        }
+        var dg = $(this);
+        var opts = dg.datagrid('options');
+        var pager = dg.datagrid('getPager');
+        pager.pagination({
+            onSelectPage: function (pageNum, pageSize) {
+                opts.pageNumber = pageNum;
+                opts.pageSize = pageSize;
+                pager.pagination('refresh', {pageNumber: pageNum, pageSize: pageSize});
+                dg.datagrid('loadData', data);
+            }
+        });
+        if (!data.originalRows) {
+            data.originalRows = (data.rows);
+        }
+        var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
+        var end = start + parseInt(opts.pageSize);
+        data.rows = (data.originalRows.slice(start, end));
+        return data;
+    };
+    function timeFormat(time) {
+        var d = new Date(time);
+
+        var year = d.getFullYear();       //年
+        var month = d.getMonth() + 1;     //月
+        var day = d.getDate();            //日
+
+        var hh = d.getHours();            //时
+        var mm = d.getMinutes();          //分
+        var ss = d.getSeconds();           //秒
+
+        var clock = year + "/";
+
+        if (month < 10)
+            clock += "0";
+
+        clock += month + "/";
+
+        if (day < 10)
+            clock += "0";
+
+        clock += day + " ";
+
+        if (hh < 10)
+            clock += "0";
+
+        clock += hh + ":";
+        if (mm < 10) clock += '0';
+        clock += mm + ":";
+
+        if (ss < 10) clock += '0';
+        clock += ss;
+        return (clock);
+    }
+    function filedetail(id) {
+        console.log(id);
+        $.ajax({
+            url:'../meterial/selectbyid?meterialid='+id,
+            success:function (data) {
+                console.log(data);
+                var time=timeFormat(data.datetime)
+                var ss = [
+                    {"name":"资源名称","value":data.meterialname,"group":"资源信息","edit":"text"},
+                    {"name":"发送时间","value":time,"group":"资源信息"},
+                    {"name":"发送人","value":data.author,"group":"资源信息"},
+                    {"name":"资源概述","value":data.meterdesc,"group":"资源信息"}
+                ];
+                $('#databankdetail').propertygrid({
+                    width: 400,
+                    height: 'auto',
+                    showGroup: false,
+                    scrollbarSize: 0,
+                    columns: [[
+                        { field: 'name', title: 'Name', width: 200, resizable: true },
+                        { field: 'value', title: 'Value', width: 200, resizable: false }
+                    ]]
+                });
+                $('#databankdetail').propertygrid('loadData', ss);
+                $("#databankedit").window("open");
+            }
+        })
+    }
+    function downfile(filepath){
+        console.log("点击下载")
+        window.location.href="../meterial/download?filepath="+filepath;
+    }
+
+    function getcheckbank() {
+        var bankdatas = $('#listdatabank').datagrid('getChecked');
+        var bankids = '';
+        for (var i = 0; i < bankdatas.length; i++) {
+            bankids = bankids + bankdatas[i].meterialid + ",";
+        }
+        if (bankdatas.length == 0) {
+            $.messager.alert('警告', '请选择要删除信息的资料！', '信息');
+        }
+        else if (bankdatas.length > 0) {
+            $.messager.confirm('My Title', '你确定要删除' + bankdatas.length + '个数据吗?', function (r) {
+                if (r) {
+                    $.ajax({
+                            url: "../meterial/deletemeterials",
+                            type: 'POST',
+                            data: {
+                                meterials: bankids
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                if (data == "1") {
+                                    $.messager.show({
+                                        title: '消息',
+                                        msg: '删除成功',
+                                        timeout: 5000,
+                                        showType: 'slide'
+                                    });
+                                    $('#listdatabank').datagrid('reload');
+                                }
+                                else {
+                                    $.messager.show({
+                                        title: '消息',
+                                        msg: '删除失败',
+                                        timeout: 5000,
+                                        showType: 'slide'
+                                    });
+                                    $('#listdatabank').datagrid('reload');
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+        }
+
+    }
+    $(function () {
+        $("#addbank").click(function () {
+            $("#databankwin").window("open");
+        })
+        $("#deletebank").click(function () {
+            getcheckbank();
+        })
+    })
+    function closemodelbank() {
+        $("#databankwin").window("close");
+        $("#databankedit").window("close");
+    }
+    function submitallbank() {
+        console.log("开始上传")
+        $('#databank').form({
+            url:'../meterial/upload',
+            onSubmit: function(){
+                // do some check
+                // return false to prevent submit;
+            },
+            success:function(data){
+                if(data=="1")
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '上传成功',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+                else if(data=="0")
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '上传失败',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+                closemodelbank();
+                $('#listdatabank').datagrid('reload');
+            }
+        })
+        $('#databank').submit();
+    }
+    $("#listdatabank").datagrid(
+        {
+            url: '../meterial/getAllmeterial',
+            loadFilter: pagerFilter,
+            rownumbers: true,
+            singleSelect: false,
+            pageSize: 20,
+            pagination: true,
+            multiSort: true,
+            fitColumns: true,
+            fit: true,
+            columns: [[
+                {field: 'ck', title: 'id', width: 100, checkbox: true},
+                {field: 'meterialid', title: 'ID', width: 100},
+                {field: 'meterialitype', title: '资源类型', width: 100, formatter: function (value, row, index) {
+                        if (value == "1") {
+                            return "JAVA";
+                        } else if (value == "2") {
+                            return "JS";
+                        }
+                    }},
+                {field: 'meterialname', title: '资源名称', width: 100},
+                {field: 'meterialsize', title: '资源大小', width: 100},
+                {field: 'meterialurl', title: '下载', width: 100, formatter: function (value, row, index) {
+                        var path=''+row.meterialurl;
+                        var str = '<button rel="external nofollow" onclick="downfile(\''+path+'\')" class="easyui-linkbutton" >下载</button>';
+                        return str;
+                    }},
+                {field: 'author', title: '详情', width: 100, formatter: function (value, row, index) {
+                        var path=''+row.meterialurl;
+                        var str = '<button rel="external nofollow" onclick="filedetail(\''+row.meterialid+'\')" class="easyui-linkbutton" >查看详情</button>';
+                        return str;
+                    }}
+            ]]
+        }
+    )
+</script>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'center',border:false">
+        <!-- Begin of toolbar -->
+        <div id="databank-toolbar">
+            <div style=" padding:5px 0;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" id="addbank"> 上传</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" id="deletebank"> 删除</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cut'" id="editbank"> 修改</A>
+            </div>
+            <div>
+                <label style="margin-right: 5px;">分类:</label><input id="searchid" class="easyui-textbox" style="width:100px;height:22px;">
+                <label style="margin-right: 5px;">资料名称:</label><input id="searchusername" class="easyui-textbox" style="width:100px;height:22px;">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="querybank()">查询</a>
+            </div>
+        </div>
+        <!-- End of toolbar -->
+        <table id="listdatabank" style="margin-top: 20px;" toolbar="#databank-toolbar"></table>
+    </div>
+</div>
+<div id="databankwin" class="easyui-window" title="增加" style="width:300px;height:400px"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata" id="listuse" data-options="region:'center'">
+            <form id="databank" method="post" enctype="multipart/form-data" style=" margin:10px;">
+                <div class="enterprase">
+                    <label for="name" class="label">资料分类:</label>
+                    <select name="meterialtype">
+                        <option value="1">JAVA</option>
+                        <option value="2">JS</option>
+                        <option value="3">大数据</option>
+                        <option value="4">物联网</option>
+                        <option value="5">WEB</option>
+                        <option value="6">C</option>
+                        <option value="7">C++</option>
+                        <option value="8">服务器</option>
+                        <option value="9">数据库</option>
+                        <option value="10">缓存</option>
+                        <option value="11">接口</option>
+                    </select>
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">资料标题:</label>
+                    <input class="easyui-textbox" name="meterialname" iconWidth="28"
+                           data-options="required:true,novalidate:true" style="height:22px;">
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">概述:</label>
+                    <input class="easyui-textbox" name="meterdesc"  iconWidth="28"
+                           data-options="required:true,novalidate:true" style="height:22px;">
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">上传人:</label>
+                    <input class="easyui-textbox" name="author"  iconWidth="28"
+                           data-options="required:true,novalidate:true" style="height:22px;">
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">文件:</label>
+                    <input class="easyui-filebox" name="file" data-options="prompt:'Choose a file...'" style="height:22px;">
+                </div>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;overflow-y: hidden;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="submitallbank()"
+               style="width:80px">上传</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodelbank()" style="width:80px">取消</a>
+        </div>
+    </div>
+</div>
+
+
+<!--//修改用户信息-->
+<div id="databankedit" class="easyui-window" title="修改" style="width:400px;"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+    <table id="databankdetail"   style="width:300px"></table>
+</div>

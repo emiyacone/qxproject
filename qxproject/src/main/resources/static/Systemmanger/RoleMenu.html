@@ -1,0 +1,93 @@
+<script>
+function queryrolemenu() {
+    var name=$("#searchrolemenu").val();
+    $.ajax({
+            url:"../role/getrolemenubyname",
+            type : 'POST',
+            data:{
+                rolename:name
+            },
+            success:function (data) {
+                console.log(data);
+                $('#rolemenumain').tree({
+                    data:data.menutrees,
+                    onlyLeafCheck:true,
+                    cascadeCheck: false,
+                });
+                $("#rolemenuname").text(data.rolename);
+            }
+        }
+    );
+}
+function submitrolemenu(){
+    var rolemenudatas = $('#rolemenumain').tree('getChecked');
+    var menuids = '';
+    var name=$("#rolemenuname").text();
+    console.log(name);
+    if(name != null && name != undefined && name != '')
+    {
+            var pid=rolemenudatas[0].pId;
+            menuids=menuids+pid+",";
+            for (var i = 0; i < rolemenudatas.length; i++) {
+                menuids = menuids + rolemenudatas[i].id + ",";
+                if(pid!=rolemenudatas[i].pId)
+                {
+                    pid=rolemenudatas[i].pId;
+                    menuids=menuids+pid+",";
+                }
+            }
+            console.log(rolemenudatas);
+            $.ajax({
+                url: '../rolemenu/insertrolemenu',
+                // contentType: 'application/json',
+                data:
+                    {
+                        menuids:menuids,
+                        rolename:name
+                    },
+                success: function (data) {
+                    console.log(data);
+                    if(data=='true')
+                    {
+                        $.messager.alert('消息', '权限修改成功！', '信息');
+                    }
+                }
+            })
+    }
+    else {
+        $.messager.alert('消息', '请先查询角色！', '信息');
+
+    }
+
+}
+$(function () {
+    $.ajax({
+            url:"../menu/getallformmenus",
+            type : 'POST',
+            data:{
+                rolename:name
+            },
+            success:function (data) {
+                console.log(data);
+                $('#rolemenumain').tree({
+                    data:data,
+                    onlyLeafCheck:true,
+                    cascadeCheck: false,
+                });
+            }
+        }
+    );
+})
+</script>
+<div>
+    <label>角色名称:</label><input id="searchrolemenu" class="easyui-textbox" style="width:100px">
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="queryrolemenu()">查询</a>
+    <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="submitrolemenu()">提交</a>
+</div>
+<div id="rolemenuname"></div>
+<div class="easyui-panel" style="padding:5px">
+    <ul id="rolemenumain" class="easyui-tree" data-options="animate:true,checkbox:true"
+        ></ul>
+</div>
+
+

@@ -1,0 +1,353 @@
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'center',border:false">
+        <!-- Begin of toolbar -->
+        <div id="role-toolbar">
+            <div style=" padding:5px 0;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" id="addrole"> 添加</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" id="deleterole"> 删除</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cut'" id="editrole"> 修改</A>
+            </div>
+            <div>
+                <label>角色ID:</label><input id="roleid" class="easyui-textbox" style="width:100px">
+                <label>角色名称:</label><input id="rolename" class="easyui-textbox" style="width:100px">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="queryroles()">查询</a>
+            </div>
+        </div>
+        <!-- End of toolbar -->
+        <table id="listrole" style="margin-top: 20px;" toolbar="#role-toolbar"></table>
+    </div>
+</div>
+<div id="rolewin" class="easyui-window" title="增加" style="width:300px;height:400px"    data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata" id="listuse" data-options="region:'center'">
+            <form id="roledata" method="post" enctype="application/json" style =" margin:10px;">
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">角色名称:</label>
+                    </div>
+                    <input  class="easyui-validatebox validatebox-text" type="text" name="roleName" data-options="required:true,novalidate:true" />
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">角色描述:</label>
+                    </div>
+                    <input class="easyui-validatebox validatebox-text" type="text" name="roleMessage" data-options="required:true,novalidate:true" />
+                </div>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="submitallrole()"  style="width:80px">Ok</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodelrole()" style="width:80px">Cancel</a>
+        </div>
+    </div>
+</div>
+
+
+<!--//修改用户信息-->
+<div id="editrolewin" class="easyui-window" title="修改" style="width:300px;height:400px"    data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata"  data-options="region:'center'">
+            <form id="editroles" method="post" enctype="application/json" style =" margin:10px;">
+                <input name="roleid" hidden/>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">角色名称:</label>
+                    </div>
+                    <input  class="easyui-validatebox validatebox-text" type="text" name="roleName" data-options="required:true,novalidate:true" />
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">角色描述:</label>
+                    </div>
+                    <input class="easyui-validatebox validatebox-text" type="text" name="roleMessage" data-options="required:true,novalidate:true" />
+                </div>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="editallrole()"  style="width:80px">Ok</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodelrole()" style="width:80px">Cancel</a>
+        </div>
+    </div>
+</div>
+<div id="showdia" class="easyui-dialog" title="My Dialog" style="width:400px;height:200px;"    data-options="iconCls:'icon-save',resizable:true,modal:true,closed:true">
+    <div class="easyui-panel" style="padding:5px">
+        <ul id="showrolemenu" class="easyui-tree" data-options="animate:true,checkbox:true"
+        ></ul>
+    </div>
+</div>
+
+
+<script>
+    function queryroles() {
+        var roleid=$("#roleid").val();
+        var rolename=$("#rolename").val();
+        if (roleid != null && roleid != undefined && roleid != '') {
+            $('#listrole').datagrid('load', {
+                roleid: roleid,
+                rolename: null
+            });
+        }
+        else if (rolename != null && rolename != undefined && rolename != '') {
+            $('#listrole').datagrid('load', {
+                roleid: null,
+                rolename: rolename
+            });
+        }
+        else{
+            $('#listrole').datagrid('load', {
+                roleid: null,
+                rolename: null
+            });
+        }
+    }
+    function showqx(id) {
+            console.log("点击了:"+id);
+            loadmenutree(id);
+        $("#showdia").window("open");
+    }
+    function editallrole() {
+        var data=$("#editroles").serializeJson();
+        var jsondata=JSON.stringify(data);
+        $.ajax({
+            url:'../role/editrole',
+            type : 'POST',
+            contentType: 'application/json',
+            data: jsondata,
+            success:function (data) {
+                if(data=="1")
+                {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'修改成功',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listrole').datagrid('reload');
+                    closemodel();
+                }
+                else {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'修改失败',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listrole').datagrid('reload');
+                    closemodel();
+                }
+            }
+        });
+    }
+    function submitallrole() {
+        var data=$("#roledata").serializeJson();
+        var jsondata=JSON.stringify(data)
+        alert(jsondata)
+        $.ajax({
+            url:'../role/insertrole',
+            type : 'POST',
+            contentType: 'application/json',
+            data: jsondata,
+            success:function (data) {
+                if(data=="1")
+                {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'添加成功',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listrole').datagrid('reload');
+                    closemodelrole();
+                }
+                else {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'添加失败',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listrole').datagrid('reload');
+                    closemodelrole();
+                }
+            }
+        })
+
+    }
+    function getSelections(){
+        var roledatas=$('#listrole').datagrid('getChecked');
+        var roleids='';
+        for(var i=0;i<roledatas.length;i++)
+        {
+            roleids=roleids+roledatas[i].roleid+",";
+        }
+        if(roledatas.length>0)
+        {
+            $.messager.confirm('My Title', '你确定要删除'+roledatas.length+'个数据吗?', function(r){
+                if (r){
+                    $.ajax({
+                            url:"../role/deleteroles",
+                            type : 'POST',
+                            data:{
+                                roles:roleids
+                            },
+                            success:function (data) {
+                                console.log(data);
+                                if(data=="1")
+                                {
+                                    $.messager.show({
+                                        title:'消息',
+                                        msg:'删除成功',
+                                        timeout:5000,
+                                        showType:'slide'});
+                                    $('#listrole').datagrid('reload');
+                                }
+                                else {
+                                    $.messager.show({
+                                        title:'消息',
+                                        msg:'删除失败',
+                                        timeout:5000,
+                                        showType:'slide'});
+                                    $('#listrole').datagrid('reload');
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+        }
+
+    }
+
+    function closemodelrole() {
+        $("#rolewin").window("close");
+        $("#editrolewin").window("close");
+    };
+    function loadmenutree(id){
+        $.ajax({
+                url:"../role/getrolemenu?",
+                type : 'POST',
+                data:{
+                    roleid:id
+                },
+                success:function (data) {
+                console.log(data);
+                    $('#showrolemenu').tree({
+                        data:data,
+                        onlyLeafCheck:true,
+                        cascadeCheck: false,
+                    });
+                }
+            }
+        );
+
+    }
+    $(function () {
+        closemodelrole();
+        $("#addrole").click(function () {
+            $("#rolewin").window("open");
+        });
+        $("#deleterole").click(function () {
+            getSelections();
+        })
+        $("#editrole").click(function () {
+            var datas=$('#listrole').datagrid('getChecked');
+            // $("#editrolewin").window("open");
+            if(datas.length>1)
+            {
+                $.messager.alert('警告','不能修改一行以上数据！','信息');
+            }
+            else if(datas.length==0)
+            {
+                $.messager.alert('警告','请选择要修改信息的用户！','信息');
+            }
+            else{
+                $("#editrolewin").window("open");
+                $('#editroles').form('load',{
+                    roleid:datas[0].roleid,
+                    roleName:datas[0].roleName,
+                    roleMessage:datas[0].roleMessage,
+                });
+            }
+        });
+        function pagerFilter(data) {
+            if (typeof data.length == 'number' && typeof data.splice == 'function') {// is array
+                data = {
+                    total: data.length,
+                    rows: data
+                }
+            }
+            var dg = $(this);
+            var opts = dg.datagrid('options');
+            var pager = dg.datagrid('getPager');
+            pager.pagination({
+                onSelectPage: function (pageNum, pageSize) {
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh', {pageNumber: pageNum, pageSize: pageSize});
+                    dg.datagrid('loadData', data);
+                }
+            });
+            if (!data.originalRows) {
+                data.originalRows = (data.rows);
+            }
+            var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
+            var end = start + parseInt(opts.pageSize);
+            data.rows = (data.originalRows.slice(start, end));
+            return data;
+        };
+
+        $("#listrole").datagrid(
+            {
+                url:'../role/getallroles',
+                queryParams: {
+                    roleid: null,
+                    rolename: null
+                },
+                loadFilter: pagerFilter,
+                rownumbers: true,
+                singleSelect: false,
+                pageSize: 20,
+                pagination: true,
+                multiSort: true,
+                fitColumns: true,
+                // checkOnSelect:false,
+                idField:"roleid",
+                fit: true,
+                columns:[[
+                    {field:'ck',title:'id',width:100,checkbox:true},
+                    {field:'roleid',title:'角色id',width:100},
+                    {field:'roleName',title:'角色名',width:100},
+                    {field:'roleMessage',title:'角色信息',width:100},
+                    {field:'quanxian',title:'权限查看',width:100,
+                    formatter: function (value, row, index) {
+                        var str = '<button rel="external nofollow" onclick="showqx('+row.roleid+')" class="easyui-linkbutton" >查看权限</button>';
+                        return str;
+        }
+                    }
+                ]]
+            }
+        )
+        
+
+        $(function(){
+            $('.validatebox-text').bind('blur', function(){
+                $(this).validatebox('enableValidation').validatebox('validate');
+            });
+        })
+
+    })
+    $.fn.serializeJson=function(){
+        var serializeObj={};
+        var array=this.serializeArray();
+        var str=this.serialize();
+        $(array).each(function(){
+            if(serializeObj[this.name]){
+                if($.isArray(serializeObj[this.name])){
+                    serializeObj[this.name].push(this.value);
+                }else{
+                    serializeObj[this.name]=[serializeObj[this.name],this.value];
+                }
+            }else{
+                serializeObj[this.name]=this.value;
+            }
+        });
+        return serializeObj;
+    };
+
+</script>

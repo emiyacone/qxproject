@@ -1,0 +1,59 @@
+00:29:36.414 logback [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication on LAPTOP-V92G2TFM with PID 4660 (D:\develop\qxproject\target\classes started by tqy in D:\develop\qxproject)
+00:29:36.420 logback [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to default profiles: default
+00:29:38.727 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+00:29:38.755 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+00:29:38.770 logback [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+00:29:38.770 logback [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.17]
+00:29:38.927 logback [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+00:29:38.928 logback [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2427 ms
+00:29:40.115 logback [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+00:29:40.510 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+00:29:40.552 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+00:29:40.559 logback [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 4.696 seconds (JVM running for 14.524)
+01:12:10.830 logback [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication on LAPTOP-V92G2TFM with PID 14692 (D:\develop\qxproject\target\classes started by tqy in D:\develop\qxproject)
+01:12:10.838 logback [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to default profiles: default
+01:12:13.597 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+01:12:13.625 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+01:12:13.650 logback [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+01:12:13.651 logback [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.17]
+01:12:13.859 logback [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+01:12:13.859 logback [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 2893 ms
+01:12:14.964 logback [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+01:12:15.385 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+01:12:15.424 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+01:12:15.430 logback [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 5.383 seconds (JVM running for 7.428)
+01:13:24.282 logback [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+01:13:24.282 logback [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+01:13:24.301 logback [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 19 ms
+01:14:32.637 logback [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication on LAPTOP-V92G2TFM with PID 6776 (D:\develop\qxproject\target\classes started by tqy in D:\develop\qxproject)
+01:14:32.641 logback [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to default profiles: default
+01:14:34.895 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+01:14:34.921 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+01:14:34.936 logback [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+01:14:34.937 logback [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.17]
+01:14:36.388 logback [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+01:14:36.388 logback [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 3683 ms
+01:14:37.488 logback [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+01:14:37.830 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+01:14:37.868 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+01:14:37.873 logback [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 5.76 seconds (JVM running for 23.225)
+01:14:51.928 logback [http-nio-8080-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+01:14:51.929 logback [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+01:14:51.950 logback [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 21 ms
+11:25:02.650 logback [main] INFO  com.example.demo.DemoApplication - Starting DemoApplication on LAPTOP-V92G2TFM with PID 3160 (D:\develop\qxproject\target\classes started by tqy in D:\develop\qxproject)
+11:25:02.654 logback [main] INFO  com.example.demo.DemoApplication - No active profile set, falling back to default profiles: default
+11:25:04.286 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+11:25:04.313 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+11:25:04.322 logback [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+11:25:04.322 logback [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.17]
+11:25:04.435 logback [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+11:25:04.435 logback [main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1718 ms
+11:25:05.138 logback [main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+11:25:05.363 logback [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+11:25:05.388 logback [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+11:25:05.391 logback [main] INFO  com.example.demo.DemoApplication - Started DemoApplication in 3.607 seconds (JVM running for 4.894)
+11:25:32.067 logback [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+11:25:32.067 logback [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+11:25:32.075 logback [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
+11:25:42.059 logback [http-nio-8080-exec-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+11:25:42.592 logback [http-nio-8080-exec-5] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.

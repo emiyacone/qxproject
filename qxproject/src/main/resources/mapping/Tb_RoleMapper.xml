@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.Tb_RoleMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Tb_Role">
+    <id column="roleid" jdbcType="INTEGER" property="roleid" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="role_message" jdbcType="VARCHAR" property="roleMessage" />
+  </resultMap>
+  <resultMap id="result" type="com.example.demo.entity.Tb_Role" extends="BaseResultMap">
+    <collection property="menus" javaType="ArrayList" ofType="com.example.demo.entity.Menu">
+      <id column="menuid" jdbcType="INTEGER" property="menuid" />
+      <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+      <result column="menu_url" jdbcType="VARCHAR" property="menuUrl" />
+      <result column="menu_level" jdbcType="VARCHAR" property="menuLevel" />
+      <result column="parentmenu" jdbcType="VARCHAR" property="parentmenu" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    roleid, role_name, role_message
+  </sql>
+  <select id="findall" resultMap="result">
+        select r.*,m.menuid,m.menu_name,m.menu_url,m.menu_level,m.parentmenu from tb_role r left outer
+        join role_rela_menu rm on r.roleid=rm.roleid left outer join tb_menu m on m.menuid=rm.menuid
+  </select>
+  <select id="findmenubyrolename" parameterType="java.lang.String" resultMap="result">
+        select r.*,m.menuid,m.menu_name,m.menu_url,m.menu_level,m.parentmenu from tb_role r left outer
+        join role_rela_menu rm on r.roleid=rm.roleid left outer join tb_menu m on m.menuid=rm.menuid where
+        r.role_name like "%"#{role_name,jdbcType=VARCHAR}"%"
+  </select>
+  <select id="findmenubyroleid" parameterType="java.lang.Integer" resultMap="result">
+        select r.*,m.menuid,m.menu_name,m.menu_url,m.menu_level,m.parentmenu from tb_role r left outer
+        join role_rela_menu rm on r.roleid=rm.roleid left outer join tb_menu m on m.menuid=rm.menuid where
+        r.roleid=#{roleid,jdbcType=INTEGER}
+  </select>
+  <select id="selectallroles" resultMap="BaseResultMap">
+    select * from tb_role
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_role
+    where roleid = #{roleid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_role
+    where roleid = #{roleid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Tb_Role">
+    insert into tb_role (roleid, role_name, role_message
+      )
+    values (#{roleid,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{roleMessage,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Tb_Role">
+    insert into tb_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleid != null">
+        roleid,
+      </if>
+      <if test="roleName != null">
+        role_name,
+      </if>
+      <if test="roleMessage != null">
+        role_message,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleid != null">
+        #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="roleName != null">
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleMessage != null">
+        #{roleMessage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Tb_Role">
+    update tb_role
+    <set>
+      <if test="roleName != null">
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleMessage != null">
+        role_message = #{roleMessage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where roleid = #{roleid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Tb_Role">
+    update tb_role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      role_message = #{roleMessage,jdbcType=VARCHAR}
+    where roleid = #{roleid,jdbcType=INTEGER}
+  </update>
+</mapper>

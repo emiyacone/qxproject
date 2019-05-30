@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Menu">
+    <id column="menuid" jdbcType="INTEGER" property="menuid" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="menu_url" jdbcType="VARCHAR" property="menuUrl" />
+    <result column="menu_level" jdbcType="VARCHAR" property="menuLevel" />
+    <result column="parentmenu" jdbcType="VARCHAR" property="parentmenu" />
+  </resultMap>
+  <resultMap id="result" type="com.example.demo.entity.Menu" extends="BaseResultMap">
+    <collection property="roles" ofType="com.example.demo.entity.Tb_Role">
+      <id column="roleid" jdbcType="INTEGER" property="roleid" />
+      <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+      <result column="role_message" jdbcType="VARCHAR" property="roleMessage" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    menuid, menu_name, menu_url, menu_level, parentmenu
+  </sql>
+  <select id="selectallmenus" resultMap="BaseResultMap">
+    select * from tb_menu
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tb_menu
+    where menuid = #{menuid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByparentmenu" parameterType="java.lang.String">
+         delete from tb_menu
+    where parentmenu = #{parentmenu,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tb_menu
+    where menuid = #{menuid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Menu">
+    insert into tb_menu (menuid, menu_name, menu_url, 
+      menu_level, parentmenu)
+    values (#{menuid,jdbcType=INTEGER}, #{menuName,jdbcType=VARCHAR}, #{menuUrl,jdbcType=VARCHAR}, 
+      #{menuLevel,jdbcType=VARCHAR}, #{parentmenu,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Menu">
+    insert into tb_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="menuid != null">
+        menuid,
+      </if>
+      <if test="menuName != null">
+        menu_name,
+      </if>
+      <if test="menuUrl != null">
+        menu_url,
+      </if>
+      <if test="menuLevel != null">
+        menu_level,
+      </if>
+      <if test="parentmenu != null">
+        parentmenu,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="menuid != null">
+        #{menuid,jdbcType=INTEGER},
+      </if>
+      <if test="menuName != null">
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null">
+        #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null">
+        #{menuLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="parentmenu != null">
+        #{parentmenu,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Menu">
+    update tb_menu
+    <set>
+      <if test="menuName != null">
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="menuUrl != null">
+        menu_url = #{menuUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="menuLevel != null">
+        menu_level = #{menuLevel,jdbcType=VARCHAR},
+      </if>
+      <if test="parentmenu != null">
+        parentmenu = #{parentmenu,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where menuid = #{menuid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Menu">
+    update tb_menu
+    set menu_name = #{menuName,jdbcType=VARCHAR},
+      menu_url = #{menuUrl,jdbcType=VARCHAR},
+      menu_level = #{menuLevel,jdbcType=VARCHAR},
+      parentmenu = #{parentmenu,jdbcType=VARCHAR}
+    where menuid = #{menuid,jdbcType=INTEGER}
+  </update>
+</mapper>

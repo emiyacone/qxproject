@@ -1,0 +1,449 @@
+<script>
+    function editall() {
+        var data = $("#editusers").serializeJson();
+        var jsondata = JSON.stringify(data);
+        $.ajax({
+            url: '../user/edituser',
+            type: 'POST',
+            contentType: 'application/json',
+            data: jsondata,
+            success: function (data) {
+                if (data == "1") {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '修改成功',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                    $('#listuser').datagrid('reload');
+                }
+                else {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '修改失败',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                    $('#listuser').datagrid('reload');
+                }
+            }
+        });
+    }
+
+    function submitall() {
+        var data = $("#ff").serializeJson();
+        var jsondata = JSON.stringify(data);
+        alert(jsondata)
+        $.ajax({
+            url: '../user/insertuser',
+            type: 'POST',
+            contentType: 'application/json',
+            data: jsondata,
+            success: function (data) {
+                if (data == "1") {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '添加成功',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                    $('#listuser').datagrid('reload');
+                }
+                else {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '添加失败',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                    $('#listuser').datagrid('reload');
+                }
+            }
+        })
+
+    }
+
+    function getSelections() {
+        var userdatas = $('#listuser').datagrid('getChecked');
+        var userids = '';
+        for (var i = 0; i < userdatas.length; i++) {
+            userids = userids + userdatas[i].userid + ",";
+        }
+        if (userdatas.length == 0) {
+            $.messager.alert('警告', '请选择要删除信息的用户！', '信息');
+        }
+        else if (userdatas.length > 0) {
+            $.messager.confirm('My Title', '你确定要删除' + userdatas.length + '个数据吗?', function (r) {
+                if (r) {
+                    $.ajax({
+                            url: "../user/deleteusers",
+                            type: 'POST',
+                            data: {
+                                users: userids
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                if (data == "1") {
+                                    $.messager.show({
+                                        title: '消息',
+                                        msg: '删除成功',
+                                        timeout: 5000,
+                                        showType: 'slide'
+                                    });
+                                    $('#listuser').datagrid('reload');
+                                }
+                                else {
+                                    $.messager.show({
+                                        title: '消息',
+                                        msg: '删除失败',
+                                        timeout: 5000,
+                                        showType: 'slide'
+                                    });
+                                    $('#listuser').datagrid('reload');
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+        }
+
+    }
+
+    function closemodel() {
+        $("#win").window("close");
+    }
+
+    $(function () {
+        closemodel();
+        $("#adduser").click(function () {
+            $("#win").window("open");
+        });
+        $("#deleteuser").click(function () {
+            getSelections();
+        })
+        $("#edituser").click(function () {
+            var userdatas = $('#listuser').datagrid('getChecked');
+            if (userdatas.length > 1) {
+                $.messager.alert('警告', '不能修改一行以上数据！', '信息');
+            }
+            else if (userdatas.length == 0) {
+                $.messager.alert('警告', '请选择要修改信息的用户！', '信息');
+            }
+            else {
+                $("#editwin").window("open");
+                $('#editusers').form('load', {
+                    userid: userdatas[0].userid,
+                    username: userdatas[0].username,
+                    password: userdatas[0].password,
+                    gender: userdatas[0].gender,
+                    email: userdatas[0].email,
+                    telephone: userdatas[0].telephone
+                });
+            }
+        });
+        $("#userole").click(function () {
+            var userdatas = $('#listuser').datagrid('getChecked');
+            if (userdatas.length > 1) {
+                $.messager.alert('警告', '不能同时修改几个用户的角色！', '信息');
+            }
+            else if (userdatas.length == 0) {
+                $.messager.alert('警告', '请选择要添加角色的用户！', '信息');
+            }
+            else {
+                $("#user_rela_role").window("open");
+                $.ajax({
+                    url: '../role/findall',
+                    success: function (data) {
+                        console.log(data);
+                        for (var i = 0; i < data.length; i++) {
+                            $("#user_role").append();
+                            $("#user_role").append(
+                                '<div >' + data[i].roleName + ' <input type="radio" name="roleid" value ="' + data[i].roleid + '" label = "' + data[i].roleName + '" /><' + '/' + 'div>'
+                            )
+
+                        }
+                        $.parser.auto;
+
+                    }
+                })
+            }
+        })
+
+        function pagerFilter(data) {
+            if (typeof data.length == 'number' && typeof data.splice == 'function') {// is array
+                data = {
+                    total: data.length,
+                    rows: data
+                }
+            }
+            var dg = $(this);
+            var opts = dg.datagrid('options');
+            var pager = dg.datagrid('getPager');
+            pager.pagination({
+                onSelectPage: function (pageNum, pageSize) {
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh', {pageNumber: pageNum, pageSize: pageSize});
+                    dg.datagrid('loadData', data);
+                }
+            });
+            if (!data.originalRows) {
+                data.originalRows = (data.rows);
+            }
+            var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
+            var end = start + parseInt(opts.pageSize);
+            data.rows = (data.originalRows.slice(start, end));
+            return data;
+        };
+        $("#listuser").datagrid(
+            {
+                url: '../user/getAlluser',
+                queryParams: {
+                    userid: null,
+                    username: null
+                },
+                loadFilter: pagerFilter,
+                rownumbers: true,
+                singleSelect: false,
+                pageSize: 20,
+                pagination: true,
+                multiSort: true,
+                fitColumns: true,
+                fit: true,
+                columns: [[
+                    {field: 'ck', title: 'id', width: 100, checkbox: true},
+                    {field: 'userid', title: 'userid', width: 100},
+                    {field: 'username', title: 'Username', width: 100},
+                    {field: 'password', title: 'Password', width: 100},
+                    {
+                        field: 'gender', title: 'Gender', width: 200, formatter: function (value, row, index) {
+                            if (value == "0") {
+                                return "男";
+                            } else if (value == "1") {
+                                return "女";
+                            }
+                        }
+                    },
+                    {field: 'telephone', title: 'Telepnone', width: 200},
+                    {field: 'email', title: 'Email', width: 200},
+                ]]
+            }
+        )
+
+
+        $(function () {
+            $('.validatebox-text').bind('blur', function () {
+                $(this).validatebox('enableValidation').validatebox('validate');
+            });
+        })
+
+    })
+    $.fn.serializeJson = function () {
+        var serializeObj = {};
+        var array = this.serializeArray();
+        var str = this.serialize();
+        $(array).each(function () {
+            if (serializeObj[this.name]) {
+                if ($.isArray(serializeObj[this.name])) {
+                    serializeObj[this.name].push(this.value);
+                } else {
+                    serializeObj[this.name] = [serializeObj[this.name], this.value];
+                }
+            } else {
+                serializeObj[this.name] = this.value;
+            }
+        });
+        return serializeObj;
+    };
+
+    function bindrole() {
+        var user = $('#listuser').datagrid('getChecked');
+        console.log(user);
+        var userid=user[0].userid;
+        var roleid=$("input[name='roleid']:checked").val();
+        var json={
+            userid:userid,
+            roleid:roleid
+        };
+        console.log(userid);
+        $.ajax({
+            url:'../userrole/insert',
+            type:'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(json),
+            success:function (data) {
+                if(data=="1")
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '角色添加成功',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+                else if(data=="0")
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '角色添加失败',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+            }
+
+        })
+            }
+
+    function queryuser() {
+        var userid = $("#searchid").val();
+        var username = $("#searchusername").val();
+        if (userid != null && userid != undefined && userid != '') {
+            $('#listuser').datagrid('load', {
+                userid: userid,
+                username: null
+            });
+        }
+        else if (username != null && username != undefined && username != '') {
+            $('#listuser').datagrid('load', {
+                userid: null,
+                username: username
+            });
+        }
+        else{
+            $('#listuser').datagrid('load', {
+                userid: null,
+                username: null
+            });
+        }
+
+    }
+</script>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'center',border:false">
+        <!-- Begin of toolbar -->
+        <div id="user-toolbar">
+            <div style=" padding:5px 0;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" id="adduser"> 添加</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" id="deleteuser"> 删除</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cut'" id="edituser"> 修改</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cut'" id="userole"> 添加用户角色</A>
+            </div>
+            <div>
+                <label style="margin-right: 5px;">用户ID:</label><input id="searchid" class="easyui-textbox"
+                                                                      style="width:100px;height:22px;">
+                <label style="margin-right: 5px;">用户名称:</label><input id="searchusername" class="easyui-textbox"
+                                                                      style="width:100px;height:22px;">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="queryuser()">查询</a>
+            </div>
+        </div>
+        <!-- End of toolbar -->
+        <table id="listuser" style="margin-top: 20px;" toolbar="#user-toolbar"></table>
+    </div>
+</div>
+<div id="win" class="easyui-window" title="增加" style="width:300px;height:400px"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata" id="listuse" data-options="region:'center'">
+            <form id="ff" method="post" enctype="application/json" style=" margin:10px;">
+                <div class="enterprase">
+                    <label for="name" class="label">用户名:</label>
+                    <input class="easyui-textbox easyui-validatebox validatebox-text" type="text" name="username"
+                           data-options="required:true,novalidate:true" style="height:22px;"/>
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">密码:</label>
+                    <input class="easyui-passwordbox" name="password" prompt="Password" iconWidth="28"
+                           data-options="required:true,novalidate:true" style="height:22px;">
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">性别:</label>
+                    <input type="radio" name="gender" id="sex" value="0" checked/>男
+                    <input type="radio" name="gender" id="sex2" value="1"/>女
+                </div>
+                <div class="enterprase">
+                    <label for="email" class="label">
+                        邮箱:
+                    </label>
+                    <input class="easyui-textbox easyui-validatebox validatebox-text" type="text" name="email"
+                           data-options="validType:'email',novalidate:true" style="height:22px;"/>
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">手机号码:</label>
+                    <input class="easyui-textbox easyui-validatebox validatebox-text" type="text" name="telephone"
+                           data-options="required:true,novalidate:true" style="height:22px;"/>
+                </div>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;overflow-y: hidden;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="submitall()"
+               style="width:80px">确认</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodel()" style="width:80px">取消</a>
+        </div>
+    </div>
+</div>
+
+
+<!--//修改用户信息-->
+<div id="editwin" class="easyui-window" title="修改" style="width:300px;height:400px"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata" data-options="region:'center'">
+            <form id="editusers" method="post" enctype="application/json" style=" margin:10px;">
+                <input name="userid" hidden/>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">用户名:</label>
+                    </div>
+                    <input class="easyui-validatebox validatebox-text" type="text" name="username"
+                           data-options="required:true,novalidate:true"/>
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">密码:</label>
+                    </div>
+                    <input type="password" class="easyui-passwordbox validatebox-text" name="password" prompt="Password"
+                           iconWidth="28" data-options="required:true,novalidate:true">
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">性别:</label>
+                    </div>
+                    <input type="radio" name="gender" value="0" checked/>男
+                    <input type="radio" name="gender" value="1"/>女
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="email" class="label">
+                            邮箱:
+                        </label>
+                    </div>
+                    <input class="easyui-validatebox validatebox-text" type="text" name="email"
+                           data-options="validType:'email',novalidate:true"/>
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">手机号码:</label>
+                    </div>
+                    <input class="easyui-validatebox validatebox-text" type="text" name="telephone"
+                           data-options="required:true,novalidate:true"/>
+                </div>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;overflow-y: hidden;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="editall()" style="width:80px">确认</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodel()" style="width:80px">取消</a>
+        </div>
+    </div>
+</div>
+
+<!---->
+<div id="user_rela_role" class="easyui-window" title="修改" style="width:300px;"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div id="user_role" style="margin:10px 0px;width:300px;text-align: center">
+    </div>
+    <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="bindrole()"
+       style="width:80px;text-align:right;">确认</a>
+</div>
+

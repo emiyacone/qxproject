@@ -1,0 +1,19 @@
+{
+	"total":50,
+	"rows":[
+	{"menuid":"60001","menuname":"系统管理","url":"","level":"父菜单"},
+	{"menuid":"60011","menuname":"用户管理","url":"../Login/Listuser.jsp?","level":"子菜单"},
+	{"menuid":"60012","menuname":"角色管理","url":"../SystemManage/RoleMain.jsp","level":"子菜单"},
+	{"menuid":"60013","menuname":"权限配置","url":"../SystemManage/RoleMenu.jsp","level":"子菜单"},
+	{"menuid":"60014","menuname":"菜单管理","url":"../SystemManage/MenuMain.jsp","level":"子菜单"},
+	{"menuid":"60002","menuname":"内容管理","url":"","level":"父菜单"},
+	{"menuid":"60021","menuname":"资料库","url":"../ContentManage/MeterialMain.jsp","level":"子菜单"},
+	{"menuid":"60022","menuname":"贴吧","url":"../ContentManage/TieMain.jsp","level":"子菜单"},
+	{"menuid":"60003","menuname":"商品管理","url":"","level":"父菜单"},
+	{"menuid":"60031","menuname":"商品管理","url":"../OfferManage/OfferMain.jsp","level":"父菜单"},
+	{"menuid":"60032","menuname":"产品管理","url":"../OfferManage/ProductMain.jsp","level":"父菜单"},
+	{"menuid":"60004","menuname":"订单管理","url":"","level":"父菜单"},
+	{"menuid":"60041","menuname":"订单管理","url":"../OrderManage/OrderMain.jsp","level":"子菜单"},
+	{"menuid":"60042","menuname":"订单流程","url":"../OrderManage/OrderFlow.jsp","level":"子菜单"}
+	]
+}

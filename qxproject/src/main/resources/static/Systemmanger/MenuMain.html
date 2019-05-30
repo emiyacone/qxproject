@@ -1,0 +1,364 @@
+<script>
+    function editallmenu() {
+        var data=$("#editmenus").serializeJson();
+        var jsondata=JSON.stringify(data);
+        alert(jsondata);
+        $.ajax({
+            url:'../menu/editmenu',
+            type : 'POST',
+            contentType: 'application/json',
+            data: jsondata,
+            success:function (data) {
+                if(data=="1")
+                {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'修改成功',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listmenu').datagrid('reload');
+                    closemodelmenu();
+                }
+                else {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'修改失败',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listmenu').datagrid('reload');
+                    closemodelmenu();
+                }
+            }
+        });
+    }
+    function submitallmenu() {
+        var data=$("#menudata").serializeJson();
+        var jsondata=JSON.stringify(data)
+        $.ajax({
+            url:'../menu/insertmenu',
+            type : 'POST',
+            contentType: 'application/json',
+            data: jsondata,
+            success:function (data) {
+                if(data=="1")
+                {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'添加成功',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listmenu').datagrid('reload');
+                    closemodelmenu();
+
+                }
+                else {
+                    $.messager.show({
+                        title:'消息',
+                        msg:'添加失败',
+                        timeout:5000,
+                        showType:'slide'});
+                    $('#listmenu').datagrid('reload');
+                    closemodelmenu();
+                }
+            }
+        })
+
+    }
+
+    function deletemenus(){
+        var menudatas=$('#listmenu').datagrid('getChecked');
+        var menuids='';
+        for(var i=0;i<menudatas.length;i++)
+        {
+            menuids=menuids+menudatas[i].menuid+",";
+        }
+        if(menudatas.length>0)
+        {
+            $.messager.confirm('My Title', '你确定要删除'+menudatas.length+'个数据吗?', function(r){
+                if (r){
+                    $.ajax({
+                            url:"../menu/deletemenus",
+                            type : 'POST',
+                            data:{
+                                menus:menuids
+                            },
+                            success:function (data) {
+                                console.log(data);
+                                if(data=="1")
+                                {
+                                    $.messager.show({
+                                        title:'消息',
+                                        msg:'删除成功',
+                                        timeout:5000,
+                                        showType:'slide'});
+                                    $('#listmenu').datagrid('reload');
+                                }
+                                else {
+                                    $.messager.show({
+                                        title:'消息',
+                                        msg:'删除失败',
+                                        timeout:5000,
+                                        showType:'slide'});
+                                    $('#listmenu').datagrid('reload');
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+        }
+
+    }
+
+    function closemodelmenu() {
+        $("#menuwin").window("close");
+        $("#editmenuwin").window("close");
+    }
+    $(function () {
+        closemodelmenu();
+        $("#addmenu").click(function () {
+            $("#menuwin").window("open");
+        });
+        $("#deletemenu").click(function () {
+            deletemenus();
+        })
+        $("#editmenu").click(function () {
+            var userdatas=$('#listmenu').datagrid('getChecked');
+            if(userdatas.length>1)
+            {
+                $.messager.alert('警告','不能修改一行以上数据！','信息');
+            }
+            else if(userdatas.length==0)
+            {
+                $.messager.alert('警告','请选择要修改信息的用户！','信息');
+            }
+            else{
+                $("#editmenuwin").window("open");
+                $('#editmenus').form('load',{
+                    menuid:userdatas[0].menuid,
+                    menuName:userdatas[0].menuName,
+                    menuUrl:userdatas[0].menuUrl,
+                    menuLevel:userdatas[0].menuLevel,
+                    parmentmenu:userdatas[0].parmentmenu
+                });
+            }
+        });
+        function pagerFilter(data) {
+            if (typeof data.length == 'number' && typeof data.splice == 'function') {// is array
+                data = {
+                    total: data.length,
+                    rows: data
+                }
+            }
+            var dg = $(this);
+            var opts = dg.datagrid('options');
+            var pager = dg.datagrid('getPager');
+            pager.pagination({
+                onSelectPage: function (pageNum, pageSize) {
+                    opts.pageNumber = pageNum;
+                    opts.pageSize = pageSize;
+                    pager.pagination('refresh', {pageNumber: pageNum, pageSize: pageSize});
+                    dg.datagrid('loadData', data);
+                }
+            });
+            if (!data.originalRows) {
+                data.originalRows = (data.rows);
+            }
+            var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
+            var end = start + parseInt(opts.pageSize);
+            data.rows = (data.originalRows.slice(start, end));
+            return data;
+        };
+        $("#listmenu").datagrid(
+            {
+                url:'../menu/getallmenus',
+                loadFilter: pagerFilter,
+                rownumbers: true,
+                singleSelect: false,
+                pageSize: 20,
+                pagination: true,
+                multiSort: true,
+                fitColumns: true,
+                onLoadSuccess:loadparentmenu,
+                fit: true,
+                columns:[[
+                    {field:'ck',title:'id',width:100,checkbox:true},
+                    {field:'menuid',title:'菜单ID',width:100},
+                    {field:'menuName',title:'菜单名称',width:100},
+                    {field:'menuUrl',title:'菜单url',width:100},
+                    {field:'menuLevel',title:'菜单等级',width:100,formatter: function(value,row,index){
+                            if (value=="1"){
+                                return "父菜单";
+                            } else if(value=="2"){
+                                return "子菜单";
+                            }}},
+                    {field:'parentmenu',title:'父菜单',width:100,formatter:function (value,row,index) {
+                            var rows = $('#listmenu').datagrid('getRows');
+                            for(var i=0;i<rows.length;i++)
+                            {
+                                if(rows[i].menuid==row.parentmenu)
+                                {
+                                    console.log(i);
+                                    return rows[i].menuName;
+                                }
+                                else if(i==(rows.length-1)){
+                                    return '';
+                                }
+
+                            }
+                        }}
+                ]]
+            }
+        )
+function loadparentmenu(){
+    var rows = $('#listmenu').datagrid('getRows');
+    $("#parentmenumessage").append("<option value=''>=无=</option>");
+    console.log(rows.length);
+    for(var i=0;i<rows.length;i++)
+    {
+        if(rows[i].menuLevel=='1')
+        {
+            $("#parentmenumessage").append("<option value='"+rows[i].menuid+"'>"+rows[i].menuName+"</option>");
+        }
+    }
+}
+
+        $(function(){
+            $('.validatebox-text').bind('blur', function(){
+                $(this).validatebox('enableValidation').validatebox('validate');
+            });
+
+        })
+
+    })
+    $.fn.serializeJson=function(){
+        var serializeObj={};
+        var array=this.serializeArray();
+        var str=this.serialize();
+        $(array).each(function(){
+            if(serializeObj[this.name]){
+                if($.isArray(serializeObj[this.name])){
+                    serializeObj[this.name].push(this.value);
+                }else{
+                    serializeObj[this.name]=[serializeObj[this.name],this.value];
+                }
+            }else{
+                serializeObj[this.name]=this.value;
+            }
+        });
+        return serializeObj;
+    };
+
+</script>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'center',border:false">
+        <!-- Begin of toolbar -->
+        <div id="menu-toolbar">
+            <div style=" padding:5px 0;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" id="addmenu"> 添加</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" id="deletemenu"> 删除</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cut'" id="editmenu"> 修改</A>
+            </div>
+            <div>
+                <label>菜单ID:</label><input id="searchid" class="easyui-textbox" style="width:100px">
+                <label>菜单名称:</label><input id="searchusername" class="easyui-textbox" style="width:100px">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="querymenu()">查询</a>
+            </div>
+        </div>
+        <!-- End of toolbar -->
+        <table id="listmenu" style="margin-top: 20px;" toolbar="#menu-toolbar"></table>
+    </div>
+</div>
+<div id="menuwin" class="easyui-window" title="增加" style="width:300px;height:400px"    data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata" id="listuse" data-options="region:'center'">
+            <form id="menudata" method="post" enctype="application/json" style =" margin:10px;">
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">菜单名称:</label>
+                    </div>
+                    <input  class="easyui-validatebox validatebox-text" type="text" name="menuName" data-options="required:true,novalidate:true" />
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">url:</label>
+                    </div>
+                    <input class="easyui-validatebox validatebox-text" type="text" name="menuUrl" data-options="required:true,novalidate:true" />
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">菜单级别:</label>
+                    </div>
+                    <select name="menuLevel">
+                        <option name="menuLevel" value="1">父菜单</option>
+                        <option name="menuLevel" value="2">子菜单</option>
+                    </select>
+                </div>
+
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">父菜单:</label>
+                    </div>
+                    <select id="parentmenumessage" name="parentmenu">
+                        <!--<option name="parentmenu"></option>-->
+                        <!--<option name="parentmenu" value="1">系统管理</option>-->
+                        <!--<option name="parentmenu" value="6">内容管理</option>-->
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="submitallmenu()"  style="width:80px">Ok</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodelmenu()" style="width:80px">Cancel</a>
+        </div>
+    </div>
+</div>
+
+
+<!--//修改用户信息-->
+<div id="editmenuwin" class="easyui-window" title="修改" style="width:300px;height:400px"    data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata"  data-options="region:'center'">
+            <form id="editmenus" method="post" enctype="application/json" style =" margin:10px;">
+                <input name="menuid" hidden/>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">菜单名称:</label>
+                    </div>
+                    <input  class="easyui-validatebox validatebox-text" type="text" name="menuName" data-options="required:true,novalidate:true" />
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">url:</label>
+                    </div>
+                    <input class="easyui-validatebox validatebox-text" type="text" name="menuUrl" data-options="required:true,novalidate:true" />
+                </div>
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">菜单级别:</label>
+                    </div>
+                    <select name="menuLevel">
+                        <option name="menuLevel" value="1">父菜单</option>
+                        <option name="menuLevel" value="2">子菜单</option>
+                    </select>
+                </div>
+
+                <div class="enterprase">
+                    <div class="label">
+                        <label for="name">父菜单:</label>
+                    </div>
+                    <select name="parentmenu">
+                        <option name="parentmenu"></option>
+                        <option name="parentmenu" value="1">系统管理</option>
+                        <option name="parentmenu" value="6">内容管理</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="editallmenu()"  style="width:80px">Ok</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodelmenu()" style="width:80px">Cancel</a>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,335 @@
+<script>
+    function submitdiscuss() {
+        var id=sessionStorage.getItem("tieid");
+        console.log(id);
+        $('#discuss').form({
+            url:'../tie/addtiediscuss?tieid='+id,
+            onSubmit: function(){
+                // do some check
+                // return false to prevent submit;
+            },
+            success:function(data){
+                console.log(data);
+                if(data==1)
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '评论成功',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+                else if(data==0)
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '评论失败',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+                $("#tiediscuss").datagrid("reload");
+            }
+        })
+        $('#discuss').submit();
+    }
+    function tiedetail(id) {
+        console.log(id);
+        sessionStorage.setItem("tieid",id);
+        $.ajax({
+            url:'../tie/getbytieid?tieid='+id,
+            success:function (data) {
+                console.log(data);
+                $("#tie_content").text(data.tiecontent);
+                $("#tiediscussput").window("open");
+            }
+        })
+
+        $("#tiediscuss").datagrid({
+            url:'../tie/getalltiediscussbytieid?tieid='+id,
+            loadFilter: pagerFilter,
+            rownumbers: true,
+            singleSelect: false,
+            pageSize: 20,
+            pagination: true,
+            multiSort: true,
+            fitColumns: true,
+            fit: true,
+            columns: [[
+                {field: 'tieid', title: '评论内容', width: 100,formatter: function (value, row, index) {
+                        return '评论者:'+row.discussAuthor+'</br>'
+                            +timeFormat(row.discussTime)+'</br>'
+                            +row.discussContent+'</br>'
+                    }}
+            ]]
+        })
+
+    }
+    function submitallpostbar() {
+        console.log("开始发帖")
+        $('#postbar').form({
+            url:'../tie/addtie',
+            contentType: 'application/json',
+            onSubmit: function(){
+                // do some check
+                // return false to prevent submit;
+            },
+            success:function(data){
+                console.log(data);
+                if(data==1)
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '发帖成功',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+                else if(data==0)
+                {
+                    $.messager.show({
+                        title: '消息',
+                        msg: '发帖失败',
+                        timeout: 5000,
+                        showType: 'slide'
+                    });
+                }
+                closemodelpost();
+                $("#listpostbar").datagrid("reload");
+            }
+        })
+        $('#postbar').submit();
+    }
+
+    function getcheckpostbar() {
+        var postbardatas = $('#listpostbar').datagrid('getChecked');
+        var pbids = '';
+        for (var i = 0; i < postbardatas.length; i++) {
+            pbids = pbids + postbardatas[i].tieid + ",";
+        }
+        if (postbardatas.length == 0) {
+            $.messager.alert('警告', '请选择要删除信息的资料！', '信息');
+        }
+        else if (postbardatas.length > 0) {
+            $.messager.confirm('My Title', '你确定要删除' + postbardatas.length + '个数据吗?', function (r) {
+                if (r) {
+                    $.ajax({
+                            url: "../tie/deleteties",
+                            type: 'POST',
+                            data: {
+                                ties: pbids
+                            },
+                            success: function (data) {
+                                console.log(data);
+                                if (data == "1") {
+                                    $.messager.show({
+                                        title: '消息',
+                                        msg: '删除成功',
+                                        timeout: 5000,
+                                        showType: 'slide'
+                                    });
+                                    $('#listpostbar').datagrid('reload');
+                                }
+                                else {
+                                    $.messager.show({
+                                        title: '消息',
+                                        msg: '删除失败',
+                                        timeout: 5000,
+                                        showType: 'slide'
+                                    });
+                                    $('#listpostbar').datagrid('reload');
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+        }
+
+    }
+    function closemodelpost() {
+        $("#postbarwin").window("close");
+    }
+    function pagerFilter(data) {
+        if (typeof data.length == 'number' && typeof data.splice == 'function') {// is array
+            data = {
+                total: data.length,
+                rows: data
+            }
+        }
+        var dg = $(this);
+        var opts = dg.datagrid('options');
+        var pager = dg.datagrid('getPager');
+        pager.pagination({
+            onSelectPage: function (pageNum, pageSize) {
+                opts.pageNumber = pageNum;
+                opts.pageSize = pageSize;
+                pager.pagination('refresh', {pageNumber: pageNum, pageSize: pageSize});
+                dg.datagrid('loadData', data);
+            }
+        });
+        if (!data.originalRows) {
+            data.originalRows = (data.rows);
+        }
+        var start = (opts.pageNumber - 1) * parseInt(opts.pageSize);
+        var end = start + parseInt(opts.pageSize);
+        data.rows = (data.originalRows.slice(start, end));
+        return data;
+    };
+    function timeFormat(time) {
+        var d = new Date(time);
+
+        var year = d.getFullYear();       //年
+        var month = d.getMonth() + 1;     //月
+        var day = d.getDate();            //日
+
+        var hh = d.getHours();            //时
+        var mm = d.getMinutes();          //分
+        var ss = d.getSeconds();           //秒
+
+        var clock = year + "/";
+
+        if (month < 10)
+            clock += "0";
+
+        clock += month + "/";
+
+        if (day < 10)
+            clock += "0";
+
+        clock += day + " ";
+
+        if (hh < 10)
+            clock += "0";
+
+        clock += hh + ":";
+        if (mm < 10) clock += '0';
+        clock += mm + ":";
+
+        if (ss < 10) clock += '0';
+        clock += ss;
+        return (clock);
+    }
+    $("#addpostbar").click(function () {
+        $("#postbarwin").window("open");
+    })
+    $('#deletepostbar').click(function () {
+            getcheckpostbar();
+    })
+    $("#listpostbar").datagrid({
+        url:'../tie/getallties',
+        loadFilter: pagerFilter,
+        rownumbers: true,
+        singleSelect: false,
+        pageSize: 20,
+        pagination: true,
+        multiSort: true,
+        fitColumns: true,
+        fit: true,
+        columns: [[
+            {field: 'ck', title: 'id', width: 100, checkbox: true},
+            {field: 'tieid', title: 'ID', width: 100},
+            {field: 'tietype', title: '帖子类型', width: 100, formatter: function (value, row, index) {
+                    if (value == "1") {
+                        return "生活";
+                    } else if (value == "2") {
+                        return "娱乐";
+                    } else if(value=="3")
+                    {
+                        return "工作";
+                    }
+                }},
+            {field: 'tiename', title: '帖子名称', width: 100},
+            {field: 'publishtime', title: '发帖时间', width: 100,formatter:function (value, row, index) {
+                    return timeFormat(value);
+                }},
+            {field: 'author', title: '作者', width: 100},
+            {field: 'tiecontent', title: '操作', width: 100, formatter: function (value, row, index) {
+                    var path=''+row.meterialurl;
+                    var str = '<button rel="external nofollow" onclick="tiedetail(\''+row.tieid+'\')" class="easyui-linkbutton" >查看详情</button>';
+                    return str;
+                }}
+        ]]
+    })
+
+
+
+</script>
+<div class="easyui-layout" data-options="fit:true">
+    <div data-options="region:'center',border:false">
+        <!-- Begin of toolbar -->
+        <div id="postbar-toolbar">
+            <div style=" padding:5px 0;">
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" id="addpostbar"> 发帖</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" id="deletepostbar"> 删除</A>
+                <a class="easyui-linkbutton" data-options="iconCls:'icon-cut'" id="editpostbar"> 修改</A>
+            </div>
+            <div>
+                <label style="margin-right: 5px;">分类:</label><input id="searchid" class="easyui-textbox" style="width:100px;height:22px;">
+                <label style="margin-right: 5px;">资料名称:</label><input id="searchusername" class="easyui-textbox" style="width:100px;height:22px;">
+                <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="querypostbar()">查询</a>
+            </div>
+        </div>
+        <!-- End of toolbar -->
+        <table id="listpostbar" style="margin-top: 20px;" toolbar="#postbar-toolbar"></table>
+    </div>
+</div>
+<div id="postbarwin" class="easyui-window" title="发帖" style="width:300px;height:400px"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div class="easyui-layout" data-options="fit:true">
+        <div class="fromdata" id="listuse" data-options="region:'center'">
+            <form id="postbar" method="post" enctype="application/json" style=" margin:10px;">
+                <div class="enterprase">
+                    <label for="name" class="label">帖子分类:</label>
+                    <select name="tietype">
+                        <option value="1">生活</option>
+                        <option value="2">娱乐</option>
+                        <option value="3">工作</option>
+                    </select>
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">帖子标题:</label>
+                    <input class="easyui-textbox" name="tiename" iconWidth="28"
+                           data-options="required:true,novalidate:true" style="height:22px;">
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">上传人:</label>
+                    <input class="easyui-textbox" name="author"  iconWidth="28"
+                           data-options="required:true,novalidate:true" style="height:22px;">
+                </div>
+                <div class="enterprase">
+                    <label for="name" class="label">帖子内容:</label>
+                   <textarea name="tiecontent"></textarea>
+                </div>
+
+            </form>
+        </div>
+        <div data-options="region:'south',border:false" style="text-align:right;padding:5px 0 0;overflow-y: hidden;">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="submitallpostbar()"
+               style="width:80px">上传</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="closemodelpost()" style="width:80px">取消</a>
+        </div>
+    </div>
+</div>
+
+
+<!--//修改用户信息-->
+<div id="tiediscussput" class="easyui-window" title="修改" style="width:400px;"
+     data-options="iconCls:'icon-save',modal:true,closed:true">
+    <div id="tie_content" style="text-align: center;width: 380px;margin:10px 10px;">
+
+    </div>
+    <form id="discuss" method="post">
+        <div class="enterprase">
+            <label for="name" class="label">用户名:</label>
+            <input class="easyui-textbox" name="discuss_author" iconWidth="28" style="height:22px;">
+        </div>
+        <div class="enterprase">
+            <label for="name" class="label">评论:</label>
+            <textarea style="width:150px;" name="discuss_content"></textarea>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-ok'" onclick="submitdiscuss()"
+               style="width:80px;height:22px;">评论</a>
+        </div>
+    </form>
+    <table id="tiediscuss"  style="width:300px"></table>
+</div>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.Role_rela_menuMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Role_rela_menuKey">
+    <id column="roleid" jdbcType="INTEGER" property="roleid" />
+    <id column="menuid" jdbcType="INTEGER" property="menuid" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="com.example.demo.entity.Role_rela_menuKey">
+    delete from role_rela_menu
+    where roleid = #{roleid,jdbcType=INTEGER}
+      and menuid = #{menuid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Role_rela_menuKey">
+    insert into role_rela_menu (roleid, menuid)
+    values (#{roleid,jdbcType=INTEGER}, #{menuid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Role_rela_menuKey">
+    insert into role_rela_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleid != null">
+        roleid,
+      </if>
+      <if test="menuid != null">
+        menuid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleid != null">
+        #{roleid,jdbcType=INTEGER},
+      </if>
+      <if test="menuid != null">
+        #{menuid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+</mapper>

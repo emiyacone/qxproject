@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.TieMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Tie">
+    <id column="tieid" jdbcType="INTEGER" property="tieid" />
+    <result column="tiename" jdbcType="VARCHAR" property="tiename" />
+    <result column="tietype" jdbcType="VARCHAR" property="tietype" />
+    <result column="publishtime" jdbcType="TIMESTAMP" property="publishtime" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="tiecontent" jdbcType="VARCHAR" property="tiecontent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    tieid, tiename, tietype, publishtime, author, tiecontent
+  </sql>
+  <select id="findallties" resultMap="BaseResultMap">
+     SELECT * FROM tie
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from tie
+    where tieid = #{tieid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from tie
+    where tieid = #{tieid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Tie">
+    insert into tie (tieid, tiename, tietype, 
+      publishtime, author, tiecontent
+      )
+    values (#{tieid,jdbcType=INTEGER}, #{tiename,jdbcType=VARCHAR}, #{tietype,jdbcType=VARCHAR}, 
+      #{publishtime,jdbcType=TIMESTAMP}, #{author,jdbcType=VARCHAR}, #{tiecontent,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Tie">
+    insert into tie
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tieid != null">
+        tieid,
+      </if>
+      <if test="tiename != null">
+        tiename,
+      </if>
+      <if test="tietype != null">
+        tietype,
+      </if>
+      <if test="publishtime != null">
+        publishtime,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="tiecontent != null">
+        tiecontent,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tieid != null">
+        #{tieid,jdbcType=INTEGER},
+      </if>
+      <if test="tiename != null">
+        #{tiename,jdbcType=VARCHAR},
+      </if>
+      <if test="tietype != null">
+        #{tietype,jdbcType=VARCHAR},
+      </if>
+      <if test="publishtime != null">
+        #{publishtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="tiecontent != null">
+        #{tiecontent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Tie">
+    update tie
+    <set>
+      <if test="tiename != null">
+        tiename = #{tiename,jdbcType=VARCHAR},
+      </if>
+      <if test="tietype != null">
+        tietype = #{tietype,jdbcType=VARCHAR},
+      </if>
+      <if test="publishtime != null">
+        publishtime = #{publishtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="tiecontent != null">
+        tiecontent = #{tiecontent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where tieid = #{tieid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Tie">
+    update tie
+    set tiename = #{tiename,jdbcType=VARCHAR},
+      tietype = #{tietype,jdbcType=VARCHAR},
+      publishtime = #{publishtime,jdbcType=TIMESTAMP},
+      author = #{author,jdbcType=VARCHAR},
+      tiecontent = #{tiecontent,jdbcType=VARCHAR}
+    where tieid = #{tieid,jdbcType=INTEGER}
+  </update>
+</mapper>
